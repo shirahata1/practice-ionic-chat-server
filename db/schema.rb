@@ -10,12 +10,22 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2018_05_21_050848) do
+ActiveRecord::Schema.define(version: 2018_05_24_080856) do
 
   create_table "comments", force: :cascade do |t|
     t.string "body"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+  end
+
+  create_table "users", force: :cascade do |t|
+    t.string "authorized_id", null: false
+    t.string "password_digest", null: false
+    t.string "token", null: false
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["authorized_id"], name: "index_users_on_authorized_id", unique: true
+    t.index ["token"], name: "index_users_on_token", unique: true
   end
 
 end
