@@ -4,12 +4,11 @@ module Api
       before_action :authenticate
 
       def index
-        comments = if params.has_key?(:beginning_from)
-          Comment.where("comments.id >= ?", params[:beginning_from])
-        else
-          Comment.all.limit(20)
-        end
-        comments = comments.order(id: :desc)
+        comments = Comment.all
+        limit = params.has_key?(:limit) ? params[:limit].to_i : 20
+        comments = comments.limit(limit)
+        comments = comments.offset(params[:offset].to_i) if params.has_key?(:offset)
+        comments = comments.includes(:user).order(id: :desc)
         render json: comments, root: false
       end
 
