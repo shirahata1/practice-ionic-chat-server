@@ -14,6 +14,7 @@ module Api
 
       def create
         comment = Comment.create!(comment_params.merge(user_id: @current_user.id))
+        NotificationService.notify!(users: User.where.not(id: @current_user.id), body: comment.body)
         render json: comment, root: false
       end
 
