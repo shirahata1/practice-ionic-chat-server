@@ -6,14 +6,14 @@ class NotificationService
   PARTITION = 1000
 
   class << self
-    def notify!(users: nil, body: nil)
+    def notify!(users: , body: )
       new.notify!(users: users, body: body)
     end
   end
 
-  def notify!(users: nil, body: nil)
+  def notify!(users: , body: )
     (0..Float::INFINITY).each do |i|
-      offset = 1000 * i
+      offset = PARTITION * i
       tokens = users.limit(PARTITION).offset(offset).pluck(:notification_token)
       break if tokens.blank?
       tokens.compact!

@@ -13,8 +13,16 @@ module Api
       end
 
       def create
-        comment = Comment.create!(comment_params.merge(user_id: @current_user.id))
-        NotificationService.notify!(users: User.where.not(id: @current_user.id), body: comment.body)
+        comment = nil
+
+        ActiveRecord::Base.transaction do
+          comment = Comment.create!(comment_params.merge(user_id: @current_user.id))
+          users = User.select('DISTINCT users.notification_token')
+                       .where.not(id: @current_user.id)
+                       .where.not(notification_token: nil)
+          NotificationService.notify!(users: users, body: comment.body)
+        end
+
         render json: comment, root: false
       end
 
